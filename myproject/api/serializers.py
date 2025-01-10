@@ -17,5 +17,10 @@ class OrderProductSerializer(serializers.ModelSerializer):
         fields = ['product', 'quantity']
 
 
+class OrderSerializer(serializers.ModelSerializer):
+    products = OrderProductSerializer(many=True, source='orderproduct_set', read_only=True)
 
+    class Meta:
+        model = Order
+        fields = ['order_id', 'user', 'status', 'total_price', 'products', 'is_deleted']
 
