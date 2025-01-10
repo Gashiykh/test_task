@@ -9,4 +9,13 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = ["product_id", "name", "price"]
 
 
+class OrderProductSerializer(serializers.ModelSerializer):
+    product = ProductSerializer(read_only=True)
+
+    class Meta:
+        model = OrderProduct
+        fields = ['product', 'quantity']
+
+
+
 
