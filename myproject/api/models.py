@@ -19,7 +19,7 @@ class Order(models.Model):
     ]
 
     order_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(get_user_model, related_name="orders", on_delete=models.CASCADE, verbose_name="Клиент")
+    user = models.ForeignKey(get_user_model(), related_name="orders", on_delete=models.CASCADE, verbose_name="Клиент")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending', verbose_name="Статус заказа")
     total_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Общая стоимость")
     products = models.ManyToManyField(Product, through='OrderProduct', related_name='orders', verbose_name="Продукты")
