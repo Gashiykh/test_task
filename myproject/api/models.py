@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
+
 class Product(models.Model):
     product_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255, verbose_name="Название продукта")
@@ -26,3 +27,11 @@ class Order(models.Model):
     def __str__(self):
         return f"Заказ {self.order_id} от {self.user.name}"
 
+
+class OrderProduct(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(verbose_name="Количество продукта в заказе")
+
+    def __str__(self):
+        return f'{self.product.name} x {self.quantity}'
