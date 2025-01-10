@@ -23,6 +23,7 @@ class Order(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending', verbose_name="Статус заказа")
     total_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Общая стоимость")
     products = models.ManyToManyField(Product, through='OrderProduct', related_name='orders', verbose_name="Продукты")
+    is_deleted = models.BooleanField(default=False, verbose_name="Удалён")
 
     def __str__(self):
         return f"Заказ {self.order_id} от {self.user.name}"
