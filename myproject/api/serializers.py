@@ -67,4 +67,4 @@ class OrderSerializer(serializers.ModelSerializer):
                     {"detail": f"Продукт с id {product_id} не существует в заказе."}
                     )
             
-            return instance
+        return instance
