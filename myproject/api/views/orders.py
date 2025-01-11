@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, permissions
 
 from django.shortcuts import get_object_or_404
 
@@ -17,6 +17,8 @@ from api.serializers import (
 
 
 class OrderView(APIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
     def get(self, request, *args, **kwargs):
 
         if 'id' in kwargs:
