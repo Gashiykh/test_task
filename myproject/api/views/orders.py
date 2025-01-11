@@ -126,6 +126,8 @@ class OrderView(APIView):
 
     def delete(self, request, *args, **kwargs):
 
+        order_id = kwargs['id']
+
         order = get_object_or_404(
             Order,
             order_id=kwargs['id'],
@@ -140,7 +142,11 @@ class OrderView(APIView):
             )
         order.is_deleted = True
         order.save()
-        logger.info(f"Пользователь {request.user.username} удалил заказ с ID {order.order_id}")
+
+        cache_key = f"order_{order_id}"
+        cache.delete(cache_key)
+
+        logger.info(f"Пользователь {request.user.username} удалил заказ с ID {order_id} из базы и кэша")
         return Response(
             {"detail": f"Заказ {kwargs['id']} успешно удален."},
             status=status.HTTP_204_NO_CONTENT
