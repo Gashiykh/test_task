@@ -84,3 +84,18 @@ def test_patch_order(api_client):
     assert response.status_code == status.HTTP_200_OK
     assert response.data["status"] == "confirmed"
   
+
+@pytest.mark.django_db
+def test_delete_order(api_client):
+
+    client, user = api_client
+
+    product = Product.objects.create(name="Butter", price="300")
+    order = Order.objects.create(user=user, status="pending")
+
+    OrderProduct.objects.create(order=order, product=product, quantity=1)
+
+    response =client.delete(f"/api/orders/{order.order_id}/")
+
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    assert Order.objects.filter(order_id=order.order_id, is_deleted=True).exists()
