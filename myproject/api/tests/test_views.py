@@ -65,4 +65,22 @@ def test_post_order(api_client):
     assert response.data["products"][0]["quantity"] == 2
 
 
+@pytest.mark.django_db
+def test_patch_order(api_client):
+
+    client, user = api_client
+
+    product = Product.objects.create(name="Juice", price="300")
+    order = Order.objects.create(user=user, status="pending")
+
+    OrderProduct.objects.create(order=order, product=product, quantity=2)
+
+    data = {
+        "status": "confirmed"
+    }
+
+    response = client.patch(f"/api/orders/{order.order_id}/", data=data, format="json")
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data["status"] == "confirmed"
   
