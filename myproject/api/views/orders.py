@@ -5,6 +5,7 @@ from rest_framework import status, permissions
 
 from django.shortcuts import get_object_or_404
 from django.db.models import Sum, F
+from django.core.cache import cache
 
 from api.models import (
     Order,
@@ -25,19 +26,30 @@ class OrderView(APIView):
     def get(self, request, *args, **kwargs):
 
         if 'id' in kwargs:
+
+            order_id = kwargs['id']  
+            cache_key = f"order_{order_id}" 
+            order_data = cache.get(cache_key)
+
+            if order_data:
+                logger.info(f"Данные заказа с ID {order_id} получены из кэша")
+                return Response(order_data, status=status.HTTP_200_OK)
+
             order = get_object_or_404(
                 Order,
-                order_id=kwargs['id'],
+                order_id=order_id,
                 is_deleted=False
             )
 
             if order.user != request.user and not request.user.is_superuser:
-                logger.info(f"У пользователя {request.user.username} нет прав на редактирование заказа с ID {order.order_id}")
+                logger.info(f"У пользователя {request.user.username} нет прав на редактирование заказа с ID {order_id}")
                 return Response(
                     {"detail": "Нет прав на просмотр этого заказа."},
                     status=status.HTTP_403_FORBIDDEN
                 )
             serializer = OrderSerializer(order)
+            cache.set(cache_key, serializer.data, timeout=300)
+            logger.info(f"Данные заказа с ID {order.order_id} добавлены в кэш для ключа {cache_key}")
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             status_filter = request.query_params.get('status')
