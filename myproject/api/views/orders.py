@@ -82,6 +82,11 @@ class OrderView(APIView):
 
         if serializer.is_valid():
             order = serializer.save()
+
+            cache_key = f"order_{order.order_id}"
+            cache.set(cache_key, serializer.data, timeout=300)
+            logger.info(f"Данные заказа с ID {order.order_id} добавлены в кэш для ключа {cache_key}")
+
             logger.info(f"Пользователь {request.user.username} создал заказ с ID {order.order_id}")
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         logger.info(f"Ошибка при создании заказа")
