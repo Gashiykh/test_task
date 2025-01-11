@@ -45,3 +45,26 @@ class OrderSerializer(serializers.ModelSerializer):
             )
 
         return order
+
+    def update(self, instance, validated_data):
+        products = validated_data.pop('order_products', None)
+
+        instance.status = validated_data.get('status', instance.status)
+        instance.save()
+
+        if products:
+            for product in products:
+                product_id = product['product'].product_id
+                quantity = product['quantity']
+
+                order = instance.order_products.filter(product_id=product_id).first()
+
+                if order:
+                    order.quantity = quantity
+                    order.save()
+                else:
+                    raise serializers.ValidationError(
+                    {"detail": f"Продукт с id {product_id} не существует в заказе."}
+                    )
+            
+            return instance
