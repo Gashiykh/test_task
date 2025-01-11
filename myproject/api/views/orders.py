@@ -42,7 +42,7 @@ class OrderView(APIView):
             )
 
             if order.user != request.user and not request.user.is_superuser:
-                logger.info(f"У пользователя {request.user.username} нет прав на редактирование заказа с ID {order_id}")
+                logger.info(f"У пользователя {request.user.username} нет прав на просмотр заказа с ID {order_id}")
                 return Response(
                     {"detail": "Нет прав на просмотр этого заказа."},
                     status=status.HTTP_403_FORBIDDEN
@@ -70,7 +70,6 @@ class OrderView(APIView):
                 queryset = queryset.filter(total_price__lte=max_price)
 
             serializer = OrderSerializer(queryset, many=True)
-            logger.info(f"Пользователь {request.user.username} получил список заказов")
             return Response(serializer.data, status=status.HTTP_200_OK)
     
     def post(self, request):
@@ -89,7 +88,8 @@ class OrderView(APIView):
 
             logger.info(f"Пользователь {request.user.username} создал заказ с ID {order.order_id}")
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        logger.info(f"Ошибка при создании заказа")
+        
+        logger.warning(f"Ошибка при создании заказа пользователем {request.user.username}: {serializer.errors}")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def patch(self, request, *args, **kwargs):
@@ -122,6 +122,7 @@ class OrderView(APIView):
             logger.info(f"Данные заказа с ID {order.order_id} добавлены в кэш для ключа {cache_key}")
             logger.info(f"Пользователь {request.user.username} обновил заказ с ID {order.order_id}")
             return Response(serializer.data)
+        logger.warning(f"Ошибка при обновлении заказа с ID {order_id} пользователем {request.user.username}: {serializer.errors}")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, *args, **kwargs):
