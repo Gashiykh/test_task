@@ -71,7 +71,7 @@ class OrderView(APIView):
 
         order = get_object_or_404(
             Order,
-            id=kwargs['id'],
+            order_id=kwargs['id'],
             is_deleted=False
         )
         if order.user != request.user and not request.user.is_superuser:
@@ -96,7 +96,7 @@ class OrderView(APIView):
 
         order = get_object_or_404(
             Order,
-            id=kwargs['id'],
+            order_id=kwargs['id'],
             is_deleted=False
         )
 
