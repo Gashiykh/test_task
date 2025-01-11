@@ -26,7 +26,7 @@ class Order(models.Model):
 
     def total_price(self):
         total = 0
-        for item in self.order_product.all():
+        for item in self.order_products.all(): 
             price = item.product.price
             quantity = item.quantity
             item_total = price * quantity
@@ -38,7 +38,7 @@ class Order(models.Model):
 
 
 class OrderProduct(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_products')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(verbose_name="Количество продукта в заказе")
 
