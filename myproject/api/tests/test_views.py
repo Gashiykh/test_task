@@ -45,6 +45,24 @@ def test_get_order_detail_cache(api_client):
 
 
 @pytest.mark.django_db
+def test_get_order_db(api_client):
+    
+    client, user = api_client
+
+    product = Product.objects.create(name="Milk", price="100.00")
+    order = Order.objects.create(user=user, status='pending')
+    OrderProduct.objects.create(order=order, product=product, quantity=1)
+
+    cache_key = f"order_{order.order_id}"
+    cache.delete(cache_key)
+
+    response = client.get(f"/api/orders/{order.order_id}/")
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data["status"] == "pending"
+
+
+@pytest.mark.django_db
 def test_post_order(api_client):
     client, user = api_client
 
