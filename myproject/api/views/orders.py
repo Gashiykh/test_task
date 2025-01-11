@@ -94,6 +94,8 @@ class OrderView(APIView):
     
     def patch(self, request, *args, **kwargs):
 
+        order_id = kwargs['id']
+
         order = get_object_or_404(
             Order,
             order_id=kwargs['id'],
@@ -115,6 +117,9 @@ class OrderView(APIView):
 
         if serializer.is_valid():
             serializer.save()
+            cache_key = f"order_{order_id}"
+            cache.set(cache_key, serializer.data, timeout=300)
+            logger.info(f"Данные заказа с ID {order.order_id} добавлены в кэш для ключа {cache_key}")
             logger.info(f"Пользователь {request.user.username} обновил заказ с ID {order.order_id}")
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
