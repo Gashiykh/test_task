@@ -31,7 +31,7 @@ def test_get_order_list(api_client):
 def test_get_order_detail_cache(api_client):
 
     client, user = api_client
-    
+
     product = Product.objects.create(name="Milk", price="100.00")
     order = Order.objects.create(user=user, status='pending')
     OrderProduct.objects.create(order=order, product=product, quantity=1)
@@ -42,5 +42,27 @@ def test_get_order_detail_cache(api_client):
     response = client.get(f"/api/orders/{order.order_id}/")
     assert response.status_code == status.HTTP_200_OK
     assert response.data["status"] == "cached"
+
+
+@pytest.mark.django_db
+def test_post_order(api_client):
+    client, user = api_client
+
+    product = Product.objects.create(name="Bread", price="500")
+
+    data = {
+        "status": "pending",
+        "products": [{
+            "product_id": product.product_id, 
+            "quantity": 2
+        }]
+    }
+
+    response = client.post("/api/orders/", data=data, format='json')
+
+    assert response.status_code == status.HTTP_201_CREATED
+    assert response.data["status"] == "pending"
+    assert response.data["products"][0]["quantity"] == 2
+
 
   
