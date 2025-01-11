@@ -38,11 +38,14 @@ class OrderView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             status_filter = request.query_params.get('status')
-
             min_price = request.query_params.get('min_price')
             max_price = request.query_params.get('max_price')
 
             queryset = Order.objects.filter(is_deleted=False)
+
+            queryset = queryset.annotate(
+            total_price=Sum(F('order_products__product__price') * F('order_products__quantity'))
+            )
 
             if status_filter:
                 queryset = queryset.filter(status=status_filter)
