@@ -17,23 +17,39 @@ from api.serializers import (
 
 
 class OrderView(APIView):
-    def get(self, request):
-        status_filter = request.query_params.get('status')
+    def get(self, request, *args, **kwargs):
 
-        min_price = request.query_params.get('min_price')
-        max_price = request.query_params.get('max_price')
+        if 'id' in kwargs:
+            order = get_object_or_404(
+                Order,
+                id=kwargs['id'],
+                is_deleted=False
+            )
 
-        queryset = Order.objects.filter(is_deleted=False)
+            if order.user != request.user and not request.user.is_superuser:
+                return Response(
+                    {"detail": "Нет прав на просмотр этого заказа."},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+            serializer = OrderSerializer(order)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            status_filter = request.query_params.get('status')
 
-        if status_filter:
-            queryset = queryset.filter(status=status_filter)
-        if min_price:
-            queryset = queryset.filter(total_price__gte=min_price)
-        if max_price:
-            queryset = queryset.filter(total_price__lte=max_price)
+            min_price = request.query_params.get('min_price')
+            max_price = request.query_params.get('max_price')
 
-        serializer = OrderSerializer(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            queryset = Order.objects.filter(is_deleted=False)
+
+            if status_filter:
+                queryset = queryset.filter(status=status_filter)
+            if min_price:
+                queryset = queryset.filter(total_price__gte=min_price)
+            if max_price:
+                queryset = queryset.filter(total_price__lte=max_price)
+
+            serializer = OrderSerializer(queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
     
     def post(self, request):
         serializer = OrderSerializer(data=request.data)
