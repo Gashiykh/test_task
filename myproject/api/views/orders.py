@@ -66,3 +66,27 @@ class OrderView(APIView):
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+    def patch(self, request, *args, **kwargs):
+
+        order = get_object_or_404(
+            Order,
+            id=kwargs['id'],
+            is_deleted=False
+        )
+        if order.user != request.user and not request.user.is_superuser:
+            return Response(
+                {"detail": "Нет прав на редактирование этого заказа."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        serializer = OrderSerializer(
+            order,
+            data=request.data,
+            partial=True,
+            context={'request': request}
+        )
+        
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
