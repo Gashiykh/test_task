@@ -135,6 +135,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
 
+APPEND_SLASH = False
+
+
+#REST_FRAMEWORK
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
@@ -144,6 +148,7 @@ REST_FRAMEWORK = {
     # ],
 }
 
+#LOGGING
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -151,7 +156,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': 'user_actions.log', 
+            'filename': BASE_DIR / 'infrastructure/user_actions.log',
             'encoding': 'utf-8',
             'formatter': 'verbose',
         },
@@ -176,4 +181,14 @@ LOGGING = {
     },
 }
 
-APPEND_SLASH = False
+#CACHES
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://localhost:6379/0',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'CONNECTION_POOL_KWARGS': {'max_connections': 100, 'retry_on_timeout': True},
+        }
+    }
+}
