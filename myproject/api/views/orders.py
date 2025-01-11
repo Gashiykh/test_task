@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 
 from django.shortcuts import get_object_or_404
+from django.db.models import Sum, F
 
 from api.models import (
     Order,
@@ -24,7 +25,7 @@ class OrderView(APIView):
         if 'id' in kwargs:
             order = get_object_or_404(
                 Order,
-                id=kwargs['id'],
+                order_id=kwargs['id'],
                 is_deleted=False
             )
 
@@ -85,8 +86,28 @@ class OrderView(APIView):
             partial=True,
             context={'request': request}
         )
-        
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, *args, **kwargs):
+
+        order = get_object_or_404(
+            Order,
+            id=kwargs['id'],
+            is_deleted=False
+        )
+
+        if order.user != request.user and not request.user.is_superuser:
+            return Response(
+                {"detail": "Нет прав на удаление этого заказа."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        order.is_deleted = True
+        order.save()
+        return Response(
+            {"detail": f"Заказ {kwargs['id']} успешно удален."},
+            status=status.HTTP_204_NO_CONTENT
+        )
