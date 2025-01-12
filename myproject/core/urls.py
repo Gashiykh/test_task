@@ -21,6 +21,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
+from django_prometheus import exports
 
 
 schema_view = get_schema_view(
@@ -37,6 +38,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
     path('auth/', include('users.urls')),
+
+     path('metrics/', exports.ExportToDjangoView, name='prometheus-metrics'),
 
     #Swagger
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
