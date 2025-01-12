@@ -1,38 +1,45 @@
 services:
+  django:
+    build:
+      context: ..
+      dockerfile: ./myproject/Dockerfile
+    container_name: django-app
+    environment:
+      - DJANGO_SETTINGS_MODULE=core.settings
+    volumes:
+      - ..:/app
+    working_dir: /app/myproject
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+
   postgres:
+    image: postgres:14.8-alpine
     container_name: postgres
-    image: postgres:14.8-alpine3.18
     environment:
       POSTGRES_DB: "testdb"
       POSTGRES_USER: "testuser"
       POSTGRES_PASSWORD: "simplepass123"
-      PGDATA: "/var/lib/postgresql/data/pgdata"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-    restart: unless-stopped
-
 
   redis:
+    image: redis:7.0-alpine
     container_name: redis
-    image: redis:7.0-alpine  
     ports:
-      - "6379:6379"  
-    restart: unless-stopped
-    command: ["redis-server", "--appendonly", "yes"]
-    volumes:
-      - redis_data:/data 
+      - "6379:6379"
 
   prometheus:
+    image: prom/prometheus
     container_name: prometheus
-    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus.yml
     ports:
       - "9090:9090"
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    restart: unless-stopped
 
 volumes:
   postgres_data:
-  redis_data:
