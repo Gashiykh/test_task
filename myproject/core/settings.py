@@ -151,10 +151,24 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
-        'file': {
+        'django_request_file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'infrastructure/django_requests.log',
+            'encoding': 'utf-8',
+            'formatter': 'verbose',
+        },
+        'file_user_actions': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
             'filename': BASE_DIR / 'infrastructure/user_actions.log',
+            'encoding': 'utf-8',
+            'formatter': 'verbose',
+        },
+        'file_events': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'infrastructure/status_events.log',
             'encoding': 'utf-8',
             'formatter': 'verbose',
         },
@@ -167,12 +181,17 @@ LOGGING = {
     },
     'loggers': {
         'django.request': {
-            'handlers': ['file'],
+            'handlers': ['django_request_file'],
             'level': 'INFO',
             'propagate': True,
         },
         'user_actions': {
-            'handlers': ['file'],
+            'handlers': ['file_user_actions'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'order_events': { 
+            'handlers': ['file_events'],
             'level': 'INFO',
             'propagate': False,
         },
