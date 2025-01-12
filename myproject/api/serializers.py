@@ -68,11 +68,17 @@ class OrderSerializer(serializers.ModelSerializer):
                 order = instance.order_products.filter(product_id=product_id).first()
 
                 if order:
-                    order.quantity = quantity
-                    order.save()
+                    if quantity == 0:
+                        order.delete()
+                    else:
+                        order.quantity = quantity
+                        order.save()
                 else:
-                    raise serializers.ValidationError(
-                    {"detail": f"Продукт с id {product_id} не существует в заказе."}
+                    if quantity > 0:
+                        instance.order_products.create(product=product['product'], quantity=quantity)
+                    else:
+                        raise serializers.ValidationError(
+                        {"detail": f"Продукт с id {product_id} отсутствует в заказе."}
                     )
             
         return instance
