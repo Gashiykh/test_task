@@ -6,3 +6,4 @@ pytest==8.3.4
 pytest-django==4.9.0
 pytest-cov==6.0.0
 drf-yasg==1.21.8
+django-prometheus==2.3.1
