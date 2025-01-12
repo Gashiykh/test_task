@@ -37,12 +37,20 @@ class OrderSerializer(serializers.ModelSerializer):
 
         order = Order.objects.create(user=user, **validated_data)
 
+        product_dict = {}
+
         for product in products:
-            OrderProduct.objects.create(
-                order=order,
-                product=product['product'],
-                quantity=product['quantity']
-            )
+            product_id = product["product"].product_id
+            quantity = product["quantity"]
+
+            if product_id in product_dict:
+                product_dict[product_id] += quantity
+            else:
+                product_dict[product_id] = quantity
+        
+        for product_id, total_quantity in product_dict.items():
+            product_instance = Product.objects.get(product_id=product_id)
+            OrderProduct.objects.create(order=order, product=product_instance, quantity=total_quantity)
 
         return order
 
