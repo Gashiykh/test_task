@@ -135,7 +135,7 @@ class OrderView(APIView):
             is_deleted=False
         )
 
-        if order.user != request.user and not request.user.is_superuser:
+        if not request.user.is_superuser:
             logger.info(f"У пользователя {request.user.username} нет прав на удаление заказа с ID {order.order_id}")
             return Response(
                 {"detail": "Нет прав на удаление этого заказа."},
