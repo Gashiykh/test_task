@@ -2,13 +2,13 @@ INSERT INTO users_user (
     password, last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined
 )
 VALUES (
-    'pbkdf2_sha256$600000$q0FGV4E3psFkBfxgRL9O$S5h6zJeqUGSTKvVzJeUPDe+jkjLS0GboBDwle7FS/5s=',  -- хэш пароля "user"
+    'pbkdf2_sha256$260000$iDyOYCPMdCXBgUDXVx0meY$jo/WKvUCwG25bKFm9JIdrCINxvQWE3PO0lNqBDlTXXE=',  
     NULL, 
     FALSE, 
-    'user',
+    'dev',
     '',  
     '',  
-    'user@example.com',  
+    'dev@example.com',  
     FALSE,  
     TRUE,  
     NOW() 
@@ -18,7 +18,7 @@ INSERT INTO users_user (
     password, last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined
 )
 VALUES (
-    'pbkdf2_sha256$600000$O0oJLFqeGs5UwlBk0oXk$zHgZqBP6dXZfPtH9xkLBxMSkEm6mA+yDjC3S0K7G0Jg=',  -- хэш пароля "admin"
+    'pbkdf2_sha256$870000$NwWljo5VCbxJE3Lg2OFtFf$6Kuz47HnmOrV9iTn2M4KHaynu2hpq4QWa/Kx1MILFDw=', 
     NULL,  
     TRUE,  
     'admin',  
