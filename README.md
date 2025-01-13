@@ -2,12 +2,12 @@
  В проекте реализованы основные функции управления заказами, такие как создание, обновление, получение и мягкое удаление заказов. Сервис поддерживает авторизацию пользователей с различными ролями, кэширование данных, логирование действий и метрики.
 
 Стек технологий:
-• Python 3.11
-• Django/Django REST Framework
-• PostgreSQL
-• Redis
-• Docker/Docker Compose
-• Swagger/OpenAPI
+- Python 3.11
+- Django/Django REST Framework
+- PostgreSQL
+- Redis
+- Docker/Docker Compose
+- Swagger/OpenAPI
 
 Основные функции
 
