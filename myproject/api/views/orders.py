@@ -3,19 +3,18 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework.decorators import api_view
+
 from django.shortcuts import get_object_or_404
 from django.db.models import Sum, F
 from django.core.cache import cache
 
 from api.models import (
     Order,
-    Product,
-    OrderProduct
     )
 from api.serializers import (
     OrderSerializer,
-    ProductSerializer, 
-    OrderProductSerializer
     ) 
 
 logger = logging.getLogger('user_actions')
@@ -72,6 +71,7 @@ class OrderView(APIView):
             serializer = OrderSerializer(queryset, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
     
+    @swagger_auto_schema(request_body=OrderSerializer)
     def post(self, request):
 
         serializer = OrderSerializer(
@@ -92,6 +92,10 @@ class OrderView(APIView):
         logger.warning(f"Ошибка при создании заказа пользователем {request.user.username}: {serializer.errors}")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+    @swagger_auto_schema(
+        request_body=OrderSerializer,
+        responses={200: OrderSerializer}
+    )
     def patch(self, request, *args, **kwargs):
 
         order_id = kwargs['id']
