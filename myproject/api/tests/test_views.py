@@ -13,7 +13,7 @@ def api_client():
     client = APIClient()
     
     User = get_user_model()
-    user = User.objects.create_user(username="testuser", password="testpass")
+    user = User.objects.create_user(username="testuser", password="testpass", is_superuser=True)
 
     client.force_authenticate(user=user)
     return client, user
