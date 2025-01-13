@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-&x&fkmfq6fe6*+li@$w%a=x6_u2cbb$fs$ij%t(j(ey&dg*g-x'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -215,4 +215,17 @@ CACHES = {
             'CONNECTION_POOL_KWARGS': {'max_connections': 100, 'retry_on_timeout': True},
         }
     }
+}
+
+#SWAGGER
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'TokenAuth': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'description': "Введите токен в формате: Token <ваш токен>",
+        }
+    },
+    'USE_SESSION_AUTH': False,
 }
