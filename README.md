@@ -67,3 +67,5 @@
 *Создать общую сеть: docker network create test_network*
 
 *Запуск докера: docker-compose up --build*
+
+*Убедитесь, что у файла entrypoint.sh последовательность конца строки установлена LF 
