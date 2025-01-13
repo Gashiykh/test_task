@@ -39,7 +39,7 @@ urlpatterns = [
     path('api/', include('api.urls')),
     path('auth/', include('users.urls')),
 
-     path('metrics/', exports.ExportToDjangoView, name='prometheus-metrics'),
+    path('metrics/', exports.ExportToDjangoView, name='prometheus-metrics'),
 
     #Swagger
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
